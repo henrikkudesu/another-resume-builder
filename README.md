@@ -103,6 +103,51 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 Repositorio inicializado na raiz com `.gitignore` adequado para Python, Node, ambientes e artefatos de build.
 
+## Deploy no Vercel
+
+Recomendado usar dois projetos no Vercel, apontando para o mesmo repositorio.
+
+Configuracao versionada neste repositorio:
+
+- `vercel.json` na raiz: fixa runtime Python para `api/index.py`
+- `frontend/vercel.json`: rewrite SPA para `index.html`
+
+### Projeto 1: Backend (FastAPI)
+
+- Root Directory: raiz do repositorio
+- Runtime Python: usa `requirements.txt` da raiz
+- Entry point serverless: `api/index.py`
+
+Variaveis de ambiente no projeto backend:
+
+- `APP_ENV=production`
+- `ALLOWED_ORIGINS=https://SEU_FRONTEND.vercel.app`
+- `GEMINI_API_KEY=...`
+- `GEMINI_MODEL=gemini-3-flash-preview`
+
+Endpoint final esperado:
+
+- `https://SEU_BACKEND.vercel.app/api`
+
+Importante: nao use Root Directory em `app`, pois isso remove `api/index.py` e `requirements.txt` do escopo de build.
+
+### Projeto 2: Frontend (Vite)
+
+- Root Directory: `frontend`
+- Build Command: `npm run build`
+- Output Directory: `dist`
+
+Variavel de ambiente no projeto frontend:
+
+- `VITE_API_BASE_URL=https://SEU_BACKEND.vercel.app/api`
+
+### Fluxo de validacao
+
+1. Suba o backend e copie a URL publica.
+2. Configure `VITE_API_BASE_URL` no frontend com essa URL.
+3. Redeploy do frontend.
+4. Teste `POST /improve/resume` pela interface.
+
 ## Observacoes
 
 - Nunca versionar arquivos `.env` com segredos.
