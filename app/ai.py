@@ -7,12 +7,19 @@ load_dotenv()
 API_KEY = os.getenv("GEMINI_API_KEY")
 MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-3-flash-preview")
 
-client = genai.Client(api_key=API_KEY)
+
+def _get_client():
+    if not API_KEY:
+        raise RuntimeError("GEMINI_API_KEY não configurada")
+
+    try:
+        return genai.Client(api_key=API_KEY)
+    except Exception as e:
+        raise RuntimeError(f"Falha ao inicializar cliente Gemini: {e}") from e
 
 
 async def call_gemini(prompt: str) -> str:
-    if not API_KEY:
-        raise RuntimeError("GEMINI_API_KEY não configurada")
+    client = _get_client()
 
     try:
         response = client.models.generate_content(
