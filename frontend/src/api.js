@@ -1,45 +1,62 @@
 const DEFAULT_LOCAL_API = "http://localhost:8000";
 const RAW_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || DEFAULT_LOCAL_API;
 
-function resolveApiBaseUrl(rawUrl) {
+function normalizeBaseUrl(rawUrl) {
     const normalized = String(rawUrl || "").trim().replace(/\/$/, "");
 
     if (!normalized) {
         return DEFAULT_LOCAL_API;
     }
 
-    // Vercel Python functions are exposed under /api by default.
-    return /\/api$/i.test(normalized) ? normalized : `${normalized}/api`;
+    return normalized;
 }
 
-const API_BASE_URL = resolveApiBaseUrl(RAW_API_BASE_URL);
+function buildApiBaseCandidates(rawUrl) {
+    const base = normalizeBaseUrl(rawUrl);
+
+    if (/\/api$/i.test(base)) {
+        return [base, base.replace(/\/api$/i, "")].filter(Boolean);
+    }
+
+    return [`${base}/api`, base];
+}
+
+const API_BASE_CANDIDATES = buildApiBaseCandidates(RAW_API_BASE_URL);
 
 async function request(path, payload) {
-    const res = await fetch(`${API_BASE_URL}${path}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-    });
+    let lastError = null;
 
-    const text = await res.text();
-    let data = null;
+    for (let i = 0; i < API_BASE_CANDIDATES.length; i += 1) {
+        const baseUrl = API_BASE_CANDIDATES[i];
+        const res = await fetch(`${baseUrl}${path}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
 
-    try {
-        data = text ? JSON.parse(text) : null;
-    } catch {
-        data = null;
-    }
+        const text = await res.text();
+        let data = null;
 
-    if (!res.ok) {
+        try {
+            data = text ? JSON.parse(text) : null;
+        } catch {
+            data = null;
+        }
+
+        if (res.ok && data) {
+            return data;
+        }
+
         const message = data?.detail || text || "Erro ao chamar API";
-        throw new Error(message);
+        lastError = new Error(message);
+
+        // Try the fallback base path only when route was not found.
+        if (res.status !== 404) {
+            throw lastError;
+        }
     }
 
-    if (!data) {
-        throw new Error("Resposta inválida da API");
-    }
-
-    return data;
+    throw lastError || new Error("Resposta inválida da API");
 }
 
 export function improveResume(data) {
