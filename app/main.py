@@ -25,9 +25,16 @@ allowed_origins = [
     if origin.strip()
 ]
 
+allowed_origin_regex = os.getenv("ALLOWED_ORIGIN_REGEX", "").strip()
+
+# Fallback for Vercel previews when ALLOWED_ORIGINS is not explicitly configured.
+if not allowed_origin_regex and app_env == "production":
+    allowed_origin_regex = r"^https://.*\.vercel\.app$"
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
+    allow_origin_regex=allowed_origin_regex or None,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
