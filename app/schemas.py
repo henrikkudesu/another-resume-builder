@@ -6,6 +6,8 @@ from pydantic import BaseModel, model_validator
 class Experience(BaseModel):
     role: str
     company: str
+    city: Optional[str] = ""
+    period: Optional[str] = ""
     description: Union[str, List[str]]
     style: Literal["bullet", "paragraph"] = "bullet"
 
@@ -34,6 +36,7 @@ class Experience(BaseModel):
 class Education(BaseModel):
     school: str
     course: str
+    city: Optional[str] = ""
     period: Optional[str] = ""
     description: Optional[str] = ""
 

@@ -20,10 +20,10 @@ const EMPTY_RESUME = {
     links: ""
   },
   experiences: [
-    { role: "", company: "", description: "", style: "bullet" }
+    { role: "", company: "", city: "", period: "", description: "", style: "bullet" }
   ],
   education: [
-    { school: "", course: "", period: "", description: "" }
+    { school: "", course: "", city: "", period: "", description: "" }
   ],
   extras: {
     skills: "",
@@ -46,12 +46,16 @@ const JOHN_DOE_RESUME = {
     {
       role: "Desenvolvedor Full Stack",
       company: "Acme Tech",
+      city: "Sao Paulo",
+      period: "2022 - Atual",
       description: "Desenvolvimento de funcionalidades em React e FastAPI, com foco em performance e experiencia do usuario.",
       style: "bullet"
     },
     {
       role: "Analista de Sistemas",
       company: "Nova Systems",
+      city: "Sao Paulo",
+      period: "2020 - 2022",
       description: "Levantamento de requisitos, criacao de documentacao tecnica e suporte a integracoes entre sistemas.",
       style: "bullet"
     }
@@ -60,6 +64,7 @@ const JOHN_DOE_RESUME = {
     {
       school: "Universidade Exemplo",
       course: "Bacharelado em Ciencia da Computacao",
+      city: "Sao Paulo",
       period: "2018 - 2022",
       description: "Formacao com enfase em engenharia de software e arquitetura de sistemas."
     }
@@ -82,14 +87,40 @@ function isValidResume(value) {
 }
 
 function getInitialResume() {
+  function normalizeResumeShape(rawResume) {
+    return {
+      ...rawResume,
+      summary: rawResume?.summary || "",
+      experiences: Array.isArray(rawResume?.experiences) && rawResume.experiences.length
+        ? rawResume.experiences.map((exp) => ({
+          role: exp?.role || "",
+          company: exp?.company || "",
+          city: exp?.city || "",
+          period: exp?.period || "",
+          description: exp?.description || "",
+          style: exp?.style === "paragraph" ? "paragraph" : "bullet"
+        }))
+        : JSON.parse(JSON.stringify(EMPTY_RESUME.experiences)),
+      education: Array.isArray(rawResume?.education) && rawResume.education.length
+        ? rawResume.education.map((edu) => ({
+          school: edu?.school || "",
+          course: edu?.course || "",
+          city: edu?.city || "",
+          period: edu?.period || "",
+          description: edu?.description || ""
+        }))
+        : JSON.parse(JSON.stringify(EMPTY_RESUME.education))
+    };
+  }
+
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return JOHN_DOE_RESUME;
+    if (!raw) return normalizeResumeShape(JOHN_DOE_RESUME);
 
     const parsed = JSON.parse(raw);
-    return isValidResume(parsed) ? parsed : JOHN_DOE_RESUME;
+    return isValidResume(parsed) ? normalizeResumeShape(parsed) : normalizeResumeShape(JOHN_DOE_RESUME);
   } catch {
-    return JOHN_DOE_RESUME;
+    return normalizeResumeShape(JOHN_DOE_RESUME);
   }
 }
 
@@ -253,6 +284,11 @@ function App() {
       resume.experiences.forEach((exp) => {
         lines.push(`### ${exp.role || "Cargo"} - ${exp.company || "Empresa"}`);
 
+        const expMeta = [exp.period, exp.city].filter(Boolean).join(" | ");
+        if (expMeta) {
+          lines.push(expMeta);
+        }
+
         const { bullets, paragraph } = normalizeExperienceDescription(exp);
         const mode = exp.style === "paragraph" ? "paragraph" : "bullet";
 
@@ -272,7 +308,7 @@ function App() {
       resume.education.forEach((edu) => {
         lines.push(`### ${edu.course || "Curso"} - ${edu.school || "Instituicao"}`);
 
-        const details = [edu.period, edu.description].filter(Boolean);
+        const details = [edu.period, edu.city, edu.description].filter(Boolean);
         lines.push(details.length ? details.join(" | ") : "Informacoes nao preenchidas.");
         lines.push("");
       });
@@ -445,10 +481,11 @@ function App() {
       resume.experiences.forEach((exp) => {
         const { bullets, paragraph } = normalizeExperienceDescription(exp);
         const mode = exp.style === "paragraph" ? "paragraph" : "bullet";
+        const subtitle = [exp.period, exp.city].filter(Boolean).join(" | ");
 
         drawBlock(
           `${exp.role || "Cargo"} - ${exp.company || "Empresa"}`,
-          null,
+          subtitle || null,
           {
             mode,
             bullets: bullets.length ? bullets : ["Descricao nao preenchida."],
@@ -459,7 +496,7 @@ function App() {
 
       drawSectionTitle("Educacao");
       resume.education.forEach((edu) => {
-        const details = [edu.period, edu.description].filter(Boolean);
+        const details = [edu.period, edu.city, edu.description].filter(Boolean);
         drawBlock(
           `${edu.course || "Curso"} - ${edu.school || "Instituicao"}`,
           details.length ? details.join(" | ") : null,

@@ -38,6 +38,9 @@ export default function Preview({ data }) {
                 {data.experiences.map((exp, i) => (
                     <article key={i} className="resume-block">
                         <strong>{exp.role} - {exp.company}</strong>
+                        {([exp.period, exp.city].filter(Boolean).length > 0) && (
+                            <p>{[exp.period, exp.city].filter(Boolean).join(" | ")}</p>
+                        )}
                         {(() => {
                             const { bullets, paragraph } = normalizeExperience(exp);
 
@@ -62,7 +65,9 @@ export default function Preview({ data }) {
                 {data.education.map((edu, i) => (
                     <article key={i} className="resume-block">
                         <strong>{edu.course} - {edu.school}</strong>
-                        <p>{edu.period}</p>
+                        {([edu.period, edu.city].filter(Boolean).length > 0) && (
+                            <p>{[edu.period, edu.city].filter(Boolean).join(" | ")}</p>
+                        )}
                         {edu.description && <p>{edu.description}</p>}
                     </article>
                 ))}

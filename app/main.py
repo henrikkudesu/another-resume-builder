@@ -92,12 +92,34 @@ def _normalize_resume_response(parsed: dict, fallback_payload: dict):
             {
                 "role": exp.get("role") or fallback_exp.get("role", ""),
                 "company": exp.get("company") or fallback_exp.get("company", ""),
+                "city": exp.get("city") or fallback_exp.get("city", ""),
+                "period": exp.get("period") or fallback_exp.get("period", ""),
                 "description": description,
                 "style": style,
             }
         )
 
     response["experiences"] = normalized_experiences
+
+    fallback_education = fallback_payload.get("education", [])
+    normalized_education = []
+
+    for index, edu in enumerate(response["education"]):
+        if not isinstance(edu, dict):
+            continue
+
+        fallback_edu = fallback_education[index] if index < len(fallback_education) else {}
+        normalized_education.append(
+            {
+                "school": edu.get("school") or fallback_edu.get("school", ""),
+                "course": edu.get("course") or fallback_edu.get("course", ""),
+                "city": edu.get("city") or fallback_edu.get("city", ""),
+                "period": edu.get("period") or fallback_edu.get("period", ""),
+                "description": edu.get("description") or fallback_edu.get("description", ""),
+            }
+        )
+
+    response["education"] = normalized_education
     return response
 
 @app.get("/")

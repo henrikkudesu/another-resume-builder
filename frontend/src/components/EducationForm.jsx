@@ -5,7 +5,7 @@ export default function EducationForm({ education, setResume }) {
             ...prev,
             education: [
                 ...prev.education,
-                { school: "", course: "", period: "", description: "" }
+                { school: "", course: "", city: "", period: "", description: "" }
             ]
         }));
     }
@@ -58,6 +58,10 @@ export default function EducationForm({ education, setResume }) {
                     <input placeholder="Curso"
                         value={edu.course}
                         onChange={e => update(i, "course", e.target.value)} />
+
+                    <input placeholder="Cidade"
+                        value={edu.city || ""}
+                        onChange={e => update(i, "city", e.target.value)} />
 
                     <input placeholder="Período"
                         value={edu.period}

@@ -4,7 +4,7 @@ export default function ExperienceForm({ experiences, setResume }) {
             ...prev,
             experiences: [
                 ...prev.experiences,
-                { role: "", company: "", description: "", style: "bullet" }
+                { role: "", company: "", city: "", period: "", description: "", style: "bullet" }
             ]
         }));
     }
@@ -60,6 +60,14 @@ export default function ExperienceForm({ experiences, setResume }) {
                     <input placeholder="Empresa"
                         value={exp.company}
                         onChange={e => update(i, "company", e.target.value)} />
+
+                    <input placeholder="Cidade"
+                        value={exp.city || ""}
+                        onChange={e => update(i, "city", e.target.value)} />
+
+                    <input placeholder="Período"
+                        value={exp.period || ""}
+                        onChange={e => update(i, "period", e.target.value)} />
 
                     <textarea placeholder="Descrição"
                         value={Array.isArray(exp.description) ? exp.description.join("\n") : exp.description}

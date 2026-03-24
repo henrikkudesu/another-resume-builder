@@ -15,6 +15,7 @@ Dados de entrada (JSON):
 Regras críticas:
 - Nunca invente experiências, tecnologias, ferramentas, números ou resultados
 - Não mude cargo, empresa, datas ou informações pessoais
+- Não mude cidade e período de experiências e formação
 - Preserve idioma em português
 - Evite clichês e termos vagos
 - Corrija gramática e melhore objetividade
@@ -60,6 +61,8 @@ Formato de saída obrigatório:
     {{
       "role": "",
       "company": "",
+      "city": "",
+      "period": "",
       "description": "ou [\"\"] conforme style",
       "style": "bullet ou paragraph"
     }}
@@ -68,6 +71,7 @@ Formato de saída obrigatório:
     {{
       "school": "",
       "course": "",
+      "city": "",
       "period": "",
       "description": ""
     }}
