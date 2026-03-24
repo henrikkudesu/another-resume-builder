@@ -12,26 +12,29 @@ export function isValidResume(value) {
     );
 }
 
-export function normalizeResumeShape(rawResume, emptyResume) {
+export function normalizeResumeShape(rawResume, emptyResume, fallbackResume = null) {
+    const fallbackExperiences = Array.isArray(fallbackResume?.experiences) ? fallbackResume.experiences : [];
+    const fallbackEducation = Array.isArray(fallbackResume?.education) ? fallbackResume.education : [];
+
     return {
         ...rawResume,
         summary: rawResume?.summary || "",
         experiences: Array.isArray(rawResume?.experiences) && rawResume.experiences.length
-            ? rawResume.experiences.map((exp) => ({
+            ? rawResume.experiences.map((exp, index) => ({
                 role: exp?.role || "",
                 company: exp?.company || "",
-                city: exp?.city || "",
-                period: exp?.period || "",
+                city: exp?.city || fallbackExperiences[index]?.city || "",
+                period: exp?.period || fallbackExperiences[index]?.period || "",
                 description: exp?.description || "",
                 style: exp?.style === "paragraph" ? "paragraph" : "bullet"
             }))
             : clone(emptyResume.experiences),
         education: Array.isArray(rawResume?.education) && rawResume.education.length
-            ? rawResume.education.map((edu) => ({
+            ? rawResume.education.map((edu, index) => ({
                 school: edu?.school || "",
                 course: edu?.course || "",
-                city: edu?.city || "",
-                period: edu?.period || "",
+                city: edu?.city || fallbackEducation[index]?.city || "",
+                period: edu?.period || fallbackEducation[index]?.period || "",
                 description: edu?.description || ""
             }))
             : clone(emptyResume.education)
@@ -41,14 +44,14 @@ export function normalizeResumeShape(rawResume, emptyResume) {
 export function getInitialResume(storageKey, fallbackResume, emptyResume) {
     try {
         const raw = localStorage.getItem(storageKey);
-        if (!raw) return normalizeResumeShape(fallbackResume, emptyResume);
+        if (!raw) return normalizeResumeShape(fallbackResume, emptyResume, fallbackResume);
 
         const parsed = JSON.parse(raw);
         return isValidResume(parsed)
-            ? normalizeResumeShape(parsed, emptyResume)
-            : normalizeResumeShape(fallbackResume, emptyResume);
+            ? normalizeResumeShape(parsed, emptyResume, fallbackResume)
+            : normalizeResumeShape(fallbackResume, emptyResume, fallbackResume);
     } catch {
-        return normalizeResumeShape(fallbackResume, emptyResume);
+        return normalizeResumeShape(fallbackResume, emptyResume, fallbackResume);
     }
 }
 
