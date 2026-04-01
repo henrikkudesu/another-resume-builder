@@ -90,7 +90,7 @@ export async function exportResumeAsPdf(resume) {
         const titleHeight = measureParagraph(title, 11, 2);
         const subtitleHeight = subtitle ? measureParagraph(subtitle, 10, 4) : 0;
         const contentHeight = mode === "paragraph"
-            ? measureParagraph(paragraph || "Descricao nao preenchida.", 10.5, 2)
+            ? measureParagraph(paragraph || "Descrição não preenchida.", 10.5, 2)
             : safeLines.reduce((acc, item) => acc + measureParagraph(`- ${item}`, 10.5, 2), 0);
         const blockHeight = titleHeight + subtitleHeight + contentHeight + 8;
 
@@ -102,7 +102,7 @@ export async function exportResumeAsPdf(resume) {
         }
 
         if (mode === "paragraph") {
-            drawParagraph(paragraph || "Descricao nao preenchida.", {
+            drawParagraph(paragraph || "Descrição não preenchida.", {
                 fontSize: 10.5,
                 color: [30, 30, 30],
                 extraBottom: 2
@@ -116,7 +116,7 @@ export async function exportResumeAsPdf(resume) {
         y += 6;
     }
 
-    drawParagraph(resume.personal.name || "Curriculo", {
+    drawParagraph(resume.personal.name || "Currículo", {
         font: "bold",
         family: "times",
         fontSize: 20,
@@ -130,14 +130,14 @@ export async function exportResumeAsPdf(resume) {
     drawParagraph(contact, { family: "times", fontSize: 10, color: [80, 80, 80], extraBottom: 10 });
 
     drawSectionTitle("Resumo");
-    drawParagraph(resume.summary || "Resumo ainda nao preenchido.", {
+    drawParagraph(resume.summary || "Resumo ainda não preenchido.", {
         family: "times",
         fontSize: 10.5,
         color: [30, 30, 30],
         extraBottom: 12
     });
 
-    drawSectionTitle("Experiencia");
+    drawSectionTitle("Experiência");
     resume.experiences.forEach((exp) => {
         const { bullets, paragraph } = normalizeExperienceDescription(exp);
         const mode = exp.style === "paragraph" ? "paragraph" : "bullet";
@@ -148,28 +148,28 @@ export async function exportResumeAsPdf(resume) {
             subtitle || null,
             {
                 mode,
-                bullets: bullets.length ? bullets : ["Descricao nao preenchida."],
+                bullets: bullets.length ? bullets : ["Descrição não preenchida."],
                 paragraph
             }
         );
     });
 
-    drawSectionTitle("Educacao");
+    drawSectionTitle("Educação");
     resume.education.forEach((edu) => {
-        const details = [edu.period, edu.city, edu.description].filter(Boolean);
+        const details = [edu.period, edu.city].filter(Boolean);
         drawBlock(
-            `${edu.course || "Curso"} - ${edu.school || "Instituicao"}`,
+            `${edu.course || "Curso"} - ${edu.school || "Instituição"}`,
             details.length ? details.join(" | ") : null,
             {
                 mode: "paragraph",
-                paragraph: ""
+                paragraph: edu.description || ""
             }
         );
     });
 
     drawSectionTitle("Extras");
     drawParagraph(`Habilidades: ${resume.extras.skills || "-"}`, { family: "times", fontSize: 10.5, extraBottom: 3 });
-    drawParagraph(`Certificacoes: ${resume.extras.certifications || "-"}`, { family: "times", fontSize: 10.5, extraBottom: 3 });
+    drawParagraph(`Certificações: ${resume.extras.certifications || "-"}`, { family: "times", fontSize: 10.5, extraBottom: 3 });
     drawParagraph(`Interesses: ${resume.extras.interests || "-"}`, { family: "times", fontSize: 10.5, extraBottom: 6 });
 
     const filename = `${(resume.personal.name || "curriculo").replace(/\s+/g, "-").toLowerCase()}.pdf`;
