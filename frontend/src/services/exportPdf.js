@@ -1,6 +1,61 @@
 import { normalizeExperienceDescription } from "../domain/resumeNormalization";
 
-export async function exportResumeAsPdf(resume) {
+const EXPORT_LABELS = {
+    "pt-br": {
+        fallbackTitle: "Curriculo",
+        summary: "Resumo",
+        summaryFallback: "Resumo ainda nao preenchido.",
+        experience: "Experiencia",
+        education: "Educacao",
+        extras: "Extras",
+        roleFallback: "Cargo",
+        companyFallback: "Empresa",
+        experienceFallback: "Descricao nao preenchida.",
+        courseFallback: "Curso",
+        schoolFallback: "Instituicao",
+        skills: "Habilidades",
+        certifications: "Certificacoes",
+        interests: "Interesses",
+        filenameFallback: "curriculo"
+    },
+    "en-us": {
+        fallbackTitle: "Resume",
+        summary: "Summary",
+        summaryFallback: "Summary not provided yet.",
+        experience: "Experience",
+        education: "Education",
+        extras: "Extras",
+        roleFallback: "Role",
+        companyFallback: "Company",
+        experienceFallback: "Description not provided.",
+        courseFallback: "Course",
+        schoolFallback: "Institution",
+        skills: "Skills",
+        certifications: "Certifications",
+        interests: "Interests",
+        filenameFallback: "resume"
+    },
+    "es": {
+        fallbackTitle: "Curriculum",
+        summary: "Resumen",
+        summaryFallback: "Resumen aun no completado.",
+        experience: "Experiencia",
+        education: "Educacion",
+        extras: "Extras",
+        roleFallback: "Rol",
+        companyFallback: "Empresa",
+        experienceFallback: "Descripcion no completada.",
+        courseFallback: "Curso",
+        schoolFallback: "Institucion",
+        skills: "Habilidades",
+        certifications: "Certificaciones",
+        interests: "Intereses",
+        filenameFallback: "curriculum"
+    }
+};
+
+export async function exportResumeAsPdf(resume, language = "pt-br") {
+    const labels = EXPORT_LABELS[language] || EXPORT_LABELS["pt-br"];
     const { jsPDF } = await import("jspdf");
     const doc = new jsPDF({ unit: "pt", format: "a4" });
 
@@ -90,7 +145,7 @@ export async function exportResumeAsPdf(resume) {
         const titleHeight = measureParagraph(title, 11, 2);
         const subtitleHeight = subtitle ? measureParagraph(subtitle, 10, 4) : 0;
         const contentHeight = mode === "paragraph"
-            ? measureParagraph(paragraph || "Descrição não preenchida.", 10.5, 2)
+            ? measureParagraph(paragraph || labels.experienceFallback, 10.5, 2)
             : safeLines.reduce((acc, item) => acc + measureParagraph(`- ${item}`, 10.5, 2), 0);
         const blockHeight = titleHeight + subtitleHeight + contentHeight + 8;
 
@@ -102,7 +157,7 @@ export async function exportResumeAsPdf(resume) {
         }
 
         if (mode === "paragraph") {
-            drawParagraph(paragraph || "Descrição não preenchida.", {
+            drawParagraph(paragraph || labels.experienceFallback, {
                 fontSize: 10.5,
                 color: [30, 30, 30],
                 extraBottom: 2
@@ -116,7 +171,7 @@ export async function exportResumeAsPdf(resume) {
         y += 6;
     }
 
-    drawParagraph(resume.personal.name || "Currículo", {
+    drawParagraph(resume.personal.name || labels.fallbackTitle, {
         font: "bold",
         family: "times",
         fontSize: 20,
@@ -129,36 +184,36 @@ export async function exportResumeAsPdf(resume) {
         .join(" | ");
     drawParagraph(contact, { family: "times", fontSize: 10, color: [80, 80, 80], extraBottom: 10 });
 
-    drawSectionTitle("Resumo");
-    drawParagraph(resume.summary || "Resumo ainda não preenchido.", {
+    drawSectionTitle(labels.summary);
+    drawParagraph(resume.summary || labels.summaryFallback, {
         family: "times",
         fontSize: 10.5,
         color: [30, 30, 30],
         extraBottom: 12
     });
 
-    drawSectionTitle("Experiência");
+    drawSectionTitle(labels.experience);
     resume.experiences.forEach((exp) => {
         const { bullets, paragraph } = normalizeExperienceDescription(exp);
         const mode = exp.style === "paragraph" ? "paragraph" : "bullet";
         const subtitle = [exp.period, exp.city].filter(Boolean).join(" | ");
 
         drawBlock(
-            `${exp.role || "Cargo"} - ${exp.company || "Empresa"}`,
+            `${exp.role || labels.roleFallback} - ${exp.company || labels.companyFallback}`,
             subtitle || null,
             {
                 mode,
-                bullets: bullets.length ? bullets : ["Descrição não preenchida."],
+                bullets: bullets.length ? bullets : [labels.experienceFallback],
                 paragraph
             }
         );
     });
 
-    drawSectionTitle("Educação");
+    drawSectionTitle(labels.education);
     resume.education.forEach((edu) => {
         const details = [edu.period, edu.city].filter(Boolean);
         drawBlock(
-            `${edu.course || "Curso"} - ${edu.school || "Instituição"}`,
+            `${edu.course || labels.courseFallback} - ${edu.school || labels.schoolFallback}`,
             details.length ? details.join(" | ") : null,
             {
                 mode: "paragraph",
@@ -167,12 +222,12 @@ export async function exportResumeAsPdf(resume) {
         );
     });
 
-    drawSectionTitle("Extras");
-    drawParagraph(`Habilidades: ${resume.extras.skills || "-"}`, { family: "times", fontSize: 10.5, extraBottom: 3 });
-    drawParagraph(`Certificações: ${resume.extras.certifications || "-"}`, { family: "times", fontSize: 10.5, extraBottom: 3 });
-    drawParagraph(`Interesses: ${resume.extras.interests || "-"}`, { family: "times", fontSize: 10.5, extraBottom: 6 });
+    drawSectionTitle(labels.extras);
+    drawParagraph(`${labels.skills}: ${resume.extras.skills || "-"}`, { family: "times", fontSize: 10.5, extraBottom: 3 });
+    drawParagraph(`${labels.certifications}: ${resume.extras.certifications || "-"}`, { family: "times", fontSize: 10.5, extraBottom: 3 });
+    drawParagraph(`${labels.interests}: ${resume.extras.interests || "-"}`, { family: "times", fontSize: 10.5, extraBottom: 6 });
 
-    const filename = `${(resume.personal.name || "curriculo").replace(/\s+/g, "-").toLowerCase()}.pdf`;
+    const filename = `${(resume.personal.name || labels.filenameFallback).replace(/\s+/g, "-").toLowerCase()}.pdf`;
     doc.save(filename);
     return filename;
 }

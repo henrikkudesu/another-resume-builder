@@ -1,0 +1,16 @@
+:root {
+    --color-text-primary: #1f2430;
+    --color-text-secondary: #4b5565;
+    --color-surface-card: rgba(255, 255, 255, 0.88);
+    --color-border-subtle: #d9d8d2;
+    --color-accent: #0f766e;
+    --color-accent-strong: #115e59;
+    --color-focus: #0d9488;
+    --color-focus-soft: rgba(13, 148, 136, 0.24);
+
+    --elevation-surface: 0 14px 34px rgba(20, 35, 52, 0.12);
+    --elevation-soft: 0 8px 20px rgba(20, 35, 52, 0.08);
+
+    --radius-surface: 18px;
+    --radius-control: 12px;
+}

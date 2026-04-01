@@ -1,6 +1,13 @@
 import json
 
 
+LANGUAGE_LABELS = {
+  "pt-br": "portugues brasileiro",
+  "en-us": "ingles americano",
+  "es": "espanhol",
+}
+
+
 def build_resume_prompt(data: dict) -> str:
     return f"""
 Você é um editor sênior de currículos.
@@ -45,6 +52,84 @@ Formato de saída obrigatório:
 - Retorne APENAS JSON válido
 - Sem markdown
 - Sem bloco de código
+- Sem texto antes/depois do JSON
+- Deve seguir exatamente esta estrutura:
+
+{{
+  "personal": {{
+    "name": "",
+    "city": "",
+    "country": "",
+    "phone": "",
+    "links": ""
+  }},
+  "summary": "",
+  "experiences": [
+    {{
+      "role": "",
+      "company": "",
+      "city": "",
+      "period": "",
+      "description": "ou [\"\"] conforme style",
+      "style": "bullet ou paragraph"
+    }}
+  ],
+  "education": [
+    {{
+      "school": "",
+      "course": "",
+      "city": "",
+      "period": "",
+      "description": ""
+    }}
+  ],
+  "extras": {{
+    "skills": "",
+    "certifications": "",
+    "interests": ""
+  }}
+}}
+"""
+
+
+def build_translate_prompt(data: dict, target_language: str, source_language: str = "pt-br") -> str:
+    source_label = LANGUAGE_LABELS.get(source_language, source_language)
+    target_label = LANGUAGE_LABELS.get(target_language, target_language)
+
+    return f"""
+Voce e um tradutor tecnico especializado em curriculos.
+
+Objetivo:
+- Traduzir o curriculo do idioma de origem para o idioma de destino
+- Manter 100% de fidelidade aos dados fornecidos
+
+Idioma de origem: {source_label}
+Idioma de destino: {target_label}
+
+Dados de entrada (JSON):
+{json.dumps(data, indent=2, ensure_ascii=False)}
+
+Regras criticas:
+- Nunca invente experiencias, tecnologias, ferramentas, numeros ou resultados
+- Nao altere cargo, empresa, datas, telefone, links ou nome da pessoa
+- Nao adicione nem remova itens da lista
+- Se um campo estiver vazio, mantenha vazio
+- Mantenha o tipo de cada campo
+
+Regras de formatacao:
+- Em cada item de experiences, respeite o campo style recebido na entrada:
+  - style = "bullet": description deve ser lista de bullets curtos (array de strings)
+  - style = "paragraph": description deve ser texto em paragrafo unico (string)
+- Nao troque tipo de campo fora da regra de style em experiences
+
+Regras de robustez do JSON:
+- Sempre inclua todas as chaves do esquema, mesmo que vazias
+- Nao adicione chaves extras
+
+Formato de saida obrigatorio:
+- Retorne APENAS JSON valido
+- Sem markdown
+- Sem bloco de codigo
 - Sem texto antes/depois do JSON
 - Deve seguir exatamente esta estrutura:
 

@@ -70,3 +70,11 @@ async function request(path, payload) {
 export function improveResume(data) {
     return request("/improve/resume", data);
 }
+
+export function translateResume(data, targetLanguage, sourceLanguage = "pt-br") {
+    return request("/translate/resume", {
+        ...data,
+        target_language: targetLanguage,
+        source_language: sourceLanguage,
+    });
+}

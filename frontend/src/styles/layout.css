@@ -1,0 +1,107 @@
+.app-shell {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 2.2rem 1.1rem 2.6rem;
+}
+
+.app-hero {
+    margin-bottom: 1.3rem;
+    padding: 1.65rem;
+    border: 1px solid rgba(217, 216, 210, 0.78);
+    border-radius: var(--radius-surface);
+    background: linear-gradient(130deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.62));
+    box-shadow: var(--elevation-soft);
+    backdrop-filter: blur(4px);
+}
+
+.app-hero h1 {
+    margin: 0.15rem 0 0.6rem;
+    font-size: clamp(1.8rem, 3vw, 2.45rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+}
+
+.eyebrow {
+    margin: 0;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    font-size: 0.76rem;
+}
+
+.hero-copy {
+    margin: 0;
+    max-width: 760px;
+    color: var(--color-text-secondary);
+}
+
+.save-status {
+    margin: 0.65rem 0 0;
+    color: #4b5565;
+    font-size: 0.84rem;
+}
+
+.app-grid {
+    display: grid;
+    grid-template-columns: minmax(320px, 0.95fr) minmax(420px, 1.25fr);
+    gap: 1.1rem;
+}
+
+.editor-panel,
+.preview-panel {
+    min-width: 0;
+}
+
+.preview-toolbar {
+    display: grid;
+    gap: 0.8rem;
+    background: var(--color-surface-card);
+    border: 1px solid rgba(217, 216, 210, 0.88);
+    border-radius: 16px;
+    box-shadow: var(--elevation-soft);
+    margin-bottom: 0.95rem;
+    padding: 1rem 1.05rem;
+}
+
+.preview-toolbar h2 {
+    margin: 0;
+    font-size: 1.04rem;
+}
+
+.preview-toolbar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.language-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.app-footer {
+    margin-top: 1.4rem;
+    padding: 0.7rem 0.2rem 0.2rem;
+    border-top: 1px solid rgba(217, 216, 210, 0.78);
+    text-align: center;
+}
+
+.app-footer p {
+    margin: 0;
+    color: #4b5565;
+    font-size: 0.84rem;
+}
+
+.app-footer a {
+    color: var(--color-accent-strong);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(15, 118, 110, 0.35);
+}
+
+.app-footer a:hover {
+    border-bottom-color: rgba(15, 118, 110, 0.72);
+}

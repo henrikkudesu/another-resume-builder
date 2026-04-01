@@ -57,10 +57,19 @@ class Personal(BaseModel):
 
 class ResumeRequest(BaseModel):
     personal: Personal
+    summary: Optional[str] = ""
     experiences: List[Experience]
     education: List[Education]
     extras: Extras
     user_prompt: Optional[str] = None
+
+
+LanguageCode = Literal["pt-br", "en-us", "es"]
+
+
+class TranslateResumeRequest(ResumeRequest):
+    target_language: LanguageCode
+    source_language: LanguageCode = "pt-br"
 
 class ResumeResponse(BaseModel):
     personal: Personal

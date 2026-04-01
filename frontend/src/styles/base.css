@@ -1,0 +1,13 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    color: var(--color-text-primary);
+    line-height: 1.45;
+    background:
+        radial-gradient(circle at 10% 10%, rgba(245, 158, 11, 0.14), transparent 36%),
+        radial-gradient(circle at 88% 30%, rgba(15, 118, 110, 0.14), transparent 40%),
+        linear-gradient(120deg, #f3efe4 0%, #fbfaf6 38%, #f7f8f5 100%);
+}

@@ -1,0 +1,56 @@
+@media (max-width: 1020px) {
+    .app-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .preview-toolbar-header {
+        align-items: flex-start;
+    }
+
+    .language-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .language-select {
+        min-width: 180px;
+        width: min(280px, 100%);
+    }
+
+    .toolbar-actions .secondary-btn,
+    .toolbar-actions .primary-btn {
+        flex: 1 1 calc(50% - 0.25rem);
+        min-width: 180px;
+    }
+}
+
+@media (max-width: 560px) {
+    .preview-toolbar {
+        padding: 0.85rem;
+    }
+
+    .resume-preview {
+        padding: 1rem;
+    }
+
+    .language-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.35rem;
+    }
+
+    .language-select {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .toolbar-actions .secondary-btn,
+    .toolbar-actions .primary-btn {
+        flex: 1 1 100%;
+        min-width: 100%;
+    }
+
+    .translation-updated-at {
+        font-size: 0.78rem;
+    }
+}
