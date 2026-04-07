@@ -1,4 +1,4 @@
-# Outro Montador de Curriculo
+# Montador de Curriculo
 
 Aplicacao full stack para montar curriculos com apoio de IA.
 

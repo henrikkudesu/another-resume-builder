@@ -9,7 +9,7 @@ export const EMPTY_RESUME = {
         links: ""
     },
     experiences: [
-        { role: "", company: "", city: "", period: "", description: "", style: "bullet" }
+        { role: "", company: "", city: "", period: "", description: "", style: "paragraph" }
     ],
     education: [
         { school: "", course: "", city: "", period: "", description: "" }
@@ -38,7 +38,7 @@ export const JOHN_DOE_RESUME = {
             city: "Sao Paulo",
             period: "2022 - Atual",
             description: "Desenvolvimento de funcionalidades em React e FastAPI, com foco em performance e experiencia do usuario.",
-            style: "bullet"
+            style: "paragraph"
         },
         {
             role: "Analista de Sistemas",
@@ -46,7 +46,7 @@ export const JOHN_DOE_RESUME = {
             city: "Sao Paulo",
             period: "2020 - 2022",
             description: "Levantamento de requisitos, criacao de documentacao tecnica e suporte a integracoes entre sistemas.",
-            style: "bullet"
+            style: "paragraph"
         }
     ],
     education: [

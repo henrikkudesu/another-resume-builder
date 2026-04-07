@@ -1,37 +1,11 @@
+import { useArrayField } from "../hooks/useArrayField";
+
 export default function ExperienceForm({ experiences, setResume }) {
-    function addExperience() {
-        setResume(prev => ({
-            ...prev,
-            experiences: [
-                ...prev.experiences,
-                { role: "", company: "", city: "", period: "", description: "", style: "bullet" }
-            ]
-        }));
-    }
-
-    function update(index, field, value) {
-        const updated = [...experiences];
-        updated[index][field] = value;
-
-        setResume(prev => ({
-            ...prev,
-            experiences: updated
-        }));
-    }
-
-    function removeExperience(index) {
-        setResume(prev => {
-            if (prev.experiences.length <= 1) {
-                return prev;
-            }
-
-            const updated = prev.experiences.filter((_, i) => i !== index);
-            return {
-                ...prev,
-                experiences: updated
-            };
-        });
-    }
+    const { addItem, updateItem, removeItem } = useArrayField({
+        setResume,
+        fieldKey: "experiences",
+        createEmptyItem: () => ({ role: "", company: "", city: "", period: "", description: "", style: "paragraph" }),
+    });
 
     return (
         <div className="section-card">
@@ -46,7 +20,7 @@ export default function ExperienceForm({ experiences, setResume }) {
                         <button
                             type="button"
                             className="ghost-btn"
-                            onClick={() => removeExperience(i)}
+                            onClick={() => removeItem(i)}
                             disabled={experiences.length <= 1}
                         >
                             Remover
@@ -55,32 +29,32 @@ export default function ExperienceForm({ experiences, setResume }) {
 
                     <input placeholder="Cargo"
                         value={exp.role}
-                        onChange={e => update(i, "role", e.target.value)} />
+                        onChange={e => updateItem(i, "role", e.target.value)} />
 
                     <input placeholder="Empresa"
                         value={exp.company}
-                        onChange={e => update(i, "company", e.target.value)} />
+                        onChange={e => updateItem(i, "company", e.target.value)} />
 
                     <input placeholder="Cidade"
                         value={exp.city || ""}
-                        onChange={e => update(i, "city", e.target.value)} />
+                        onChange={e => updateItem(i, "city", e.target.value)} />
 
                     <input placeholder="Período"
                         value={exp.period || ""}
-                        onChange={e => update(i, "period", e.target.value)} />
+                        onChange={e => updateItem(i, "period", e.target.value)} />
 
                     <textarea placeholder="Descrição"
                         value={Array.isArray(exp.description) ? exp.description.join("\n") : exp.description}
-                        onChange={e => update(i, "description", e.target.value)} />
+                        onChange={e => updateItem(i, "description", e.target.value)} />
 
-                    <select value={exp.style || "bullet"} onChange={e => update(i, "style", e.target.value)}>
+                    <select value={exp.style || "paragraph"} onChange={e => updateItem(i, "style", e.target.value)}>
                         <option value="bullet">Bullet</option>
                         <option value="paragraph">Parágrafo</option>
                     </select>
                 </div>
             ))}
 
-            <button className="secondary-btn" onClick={addExperience}>
+            <button className="secondary-btn" onClick={addItem}>
                 + Adicionar experiência
             </button>
         </div>

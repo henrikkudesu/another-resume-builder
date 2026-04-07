@@ -1,4 +1,18 @@
 @media (max-width: 1020px) {
+    .app-hero {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+        padding: 1.25rem 1.2rem;
+    }
+
+    .hero-meta {
+        justify-items: start;
+    }
+
+    .hero-chips {
+        justify-content: flex-start;
+    }
+
     .app-grid {
         grid-template-columns: 1fr;
     }
@@ -25,6 +39,29 @@
 }
 
 @media (max-width: 560px) {
+    .app-hero {
+        padding: 1rem;
+        border-radius: 14px;
+    }
+
+    .app-hero h1 {
+        margin-top: 0.1rem;
+        font-size: clamp(1.5rem, 8.2vw, 1.95rem);
+    }
+
+    .hero-copy {
+        font-size: 0.93rem;
+    }
+
+    .hero-accent {
+        right: 0.8rem;
+        top: 0.65rem;
+    }
+
+    .save-status {
+        width: 100%;
+    }
+
     .preview-toolbar {
         padding: 0.85rem;
     }

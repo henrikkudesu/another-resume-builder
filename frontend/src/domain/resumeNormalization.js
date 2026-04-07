@@ -26,7 +26,7 @@ export function normalizeResumeShape(rawResume, emptyResume, fallbackResume = nu
                 city: exp?.city || fallbackExperiences[index]?.city || "",
                 period: exp?.period || fallbackExperiences[index]?.period || "",
                 description: exp?.description || "",
-                style: exp?.style === "paragraph" ? "paragraph" : "bullet"
+                style: exp?.style === "bullet" ? "bullet" : "paragraph"
             }))
             : clone(emptyResume.experiences),
         education: Array.isArray(rawResume?.education) && rawResume.education.length

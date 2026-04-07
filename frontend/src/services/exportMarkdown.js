@@ -1,64 +1,8 @@
 import { normalizeExperienceDescription } from "../domain/resumeNormalization";
-
-const EXPORT_LABELS = {
-    "pt-br": {
-        fallbackTitle: "Curriculo",
-        summary: "Resumo",
-        summaryFallback: "Resumo ainda nao preenchido.",
-        experience: "Experiencia",
-        education: "Educacao",
-        extras: "Extras",
-        roleFallback: "Cargo",
-        companyFallback: "Empresa",
-        experienceFallback: "Descricao nao preenchida.",
-        courseFallback: "Curso",
-        schoolFallback: "Instituicao",
-        educationFallback: "Informacoes nao preenchidas.",
-        skills: "Habilidades",
-        certifications: "Certificacoes",
-        interests: "Interesses",
-        filenameFallback: "curriculo"
-    },
-    "en-us": {
-        fallbackTitle: "Resume",
-        summary: "Summary",
-        summaryFallback: "Summary not provided yet.",
-        experience: "Experience",
-        education: "Education",
-        extras: "Extras",
-        roleFallback: "Role",
-        companyFallback: "Company",
-        experienceFallback: "Description not provided.",
-        courseFallback: "Course",
-        schoolFallback: "Institution",
-        educationFallback: "Information not provided.",
-        skills: "Skills",
-        certifications: "Certifications",
-        interests: "Interests",
-        filenameFallback: "resume"
-    },
-    "es": {
-        fallbackTitle: "Curriculum",
-        summary: "Resumen",
-        summaryFallback: "Resumen aun no completado.",
-        experience: "Experiencia",
-        education: "Educacion",
-        extras: "Extras",
-        roleFallback: "Rol",
-        companyFallback: "Empresa",
-        experienceFallback: "Descripcion no completada.",
-        courseFallback: "Curso",
-        schoolFallback: "Institucion",
-        educationFallback: "Informacion no completada.",
-        skills: "Habilidades",
-        certifications: "Certificaciones",
-        interests: "Intereses",
-        filenameFallback: "curriculum"
-    }
-};
+import { getExportLabels } from "../domain/resumeLabels";
 
 export function exportResumeAsMarkdown(resume, language = "pt-br") {
-    const labels = EXPORT_LABELS[language] || EXPORT_LABELS["pt-br"];
+    const labels = getExportLabels(language);
     const contact = [resume.personal.city, resume.personal.country, resume.personal.phone, resume.personal.links]
         .filter(Boolean)
         .join(" | ");

@@ -1,61 +1,8 @@
-const PREVIEW_LABELS = {
-    "pt-br": {
-        fallbackName: "Seu Nome",
-        fallbackLocation: "Cidade - Pais",
-        summary: "Resumo",
-        experience: "Experiencia",
-        education: "Educacao",
-        extras: "Extras",
-        missingDescription: "Descricao nao preenchida.",
-        skills: "Habilidades",
-        certifications: "Certificacoes",
-        interests: "Interesses"
-    },
-    "en-us": {
-        fallbackName: "Your Name",
-        fallbackLocation: "City - Country",
-        summary: "Summary",
-        experience: "Experience",
-        education: "Education",
-        extras: "Extras",
-        missingDescription: "Description not provided.",
-        skills: "Skills",
-        certifications: "Certifications",
-        interests: "Interests"
-    },
-    "es": {
-        fallbackName: "Tu Nombre",
-        fallbackLocation: "Ciudad - Pais",
-        summary: "Resumen",
-        experience: "Experiencia",
-        education: "Educacion",
-        extras: "Extras",
-        missingDescription: "Descripcion no completada.",
-        skills: "Habilidades",
-        certifications: "Certificaciones",
-        interests: "Intereses"
-    }
-};
+import { getPreviewLabels } from "../domain/resumeLabels";
+import { normalizeExperienceDescription } from "../domain/resumeNormalization";
 
 export default function Preview({ data, language = "pt-br" }) {
-    function normalizeExperience(exp) {
-        const raw = exp?.description;
-
-        const bullets = Array.isArray(raw)
-            ? raw.map((item) => String(item).trim()).filter(Boolean)
-            : String(raw || "")
-                .split("\n")
-                .map((item) => item.replace(/^[-*]\s*/, "").trim())
-                .filter(Boolean);
-
-        const paragraph = Array.isArray(raw)
-            ? raw.join(" ").replace(/\s+/g, " ").trim()
-            : String(raw || "").replace(/\n+/g, " ").replace(/\s+/g, " ").trim();
-
-        return { bullets, paragraph };
-    }
-
-    const labels = PREVIEW_LABELS[language] || PREVIEW_LABELS["pt-br"];
+    const labels = getPreviewLabels(language);
 
     return (
         <div className="resume-preview">
@@ -83,7 +30,7 @@ export default function Preview({ data, language = "pt-br" }) {
                             <p>{[exp.period, exp.city].filter(Boolean).join(" | ")}</p>
                         )}
                         {(() => {
-                            const { bullets, paragraph } = normalizeExperience(exp);
+                            const { bullets, paragraph } = normalizeExperienceDescription(exp);
 
                             if (exp.style === "paragraph") {
                                 return <p>{paragraph || labels.missingDescription}</p>;
