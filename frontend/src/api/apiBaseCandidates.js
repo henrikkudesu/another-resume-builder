@@ -14,9 +14,5 @@ function normalizeBaseUrl(rawUrl) {
 export function getApiBaseCandidates(rawUrl = RAW_API_BASE_URL) {
     const base = normalizeBaseUrl(rawUrl);
 
-    if (/\/api$/i.test(base)) {
-        return [base, base.replace(/\/api$/i, "")].filter(Boolean);
-    }
-
-    return [`${base}/api`, base];
+    return [base];
 }

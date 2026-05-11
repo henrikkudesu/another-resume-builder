@@ -1,4 +1,7 @@
+import { UI_TEXT } from "../content/uiText.pt-br";
+
 export default function ExtrasForm({ extras, setResume }) {
+    const text = UI_TEXT.forms.extras;
 
     function update(field, value) {
         setResume(prev => ({
@@ -12,17 +15,17 @@ export default function ExtrasForm({ extras, setResume }) {
 
     return (
         <div className="section-card">
-            <h2>Informações Complementares</h2>
+            <h2>{text.title}</h2>
 
-            <textarea placeholder="Habilidades"
+            <textarea placeholder={text.placeholders.skills}
                 value={extras.skills}
                 onChange={e => update("skills", e.target.value)} />
 
-            <textarea placeholder="Certificações"
+            <textarea placeholder={text.placeholders.certifications}
                 value={extras.certifications}
                 onChange={e => update("certifications", e.target.value)} />
 
-            <textarea placeholder="Interesses"
+            <textarea placeholder={text.placeholders.interests}
                 value={extras.interests}
                 onChange={e => update("interests", e.target.value)} />
         </div>

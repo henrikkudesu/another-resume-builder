@@ -1,6 +1,9 @@
+import { UI_TEXT } from "../content/uiText.pt-br";
 import { useArrayField } from "../hooks/useArrayField";
 
 export default function ExperienceForm({ experiences, setResume }) {
+    const text = UI_TEXT.forms.experience;
+    const common = UI_TEXT.forms.common;
     const { addItem, updateItem, removeItem } = useArrayField({
         setResume,
         fieldKey: "experiences",
@@ -9,10 +12,8 @@ export default function ExperienceForm({ experiences, setResume }) {
 
     return (
         <div className="section-card">
-            <h2>Experiência</h2>
-            <p className="field-hint">
-                Selecione o formato por experiência. O preview e o PDF seguem esse estilo.
-            </p>
+            <h2>{text.title}</h2>
+            <p className="field-hint">{text.hint}</p>
 
             {experiences.map((exp, i) => (
                 <div key={i} className="entry-card">
@@ -23,39 +24,39 @@ export default function ExperienceForm({ experiences, setResume }) {
                             onClick={() => removeItem(i)}
                             disabled={experiences.length <= 1}
                         >
-                            Remover
+                            {common.remove}
                         </button>
                     </div>
 
-                    <input placeholder="Cargo"
+                    <input placeholder={text.placeholders.role}
                         value={exp.role}
                         onChange={e => updateItem(i, "role", e.target.value)} />
 
-                    <input placeholder="Empresa"
+                    <input placeholder={text.placeholders.company}
                         value={exp.company}
                         onChange={e => updateItem(i, "company", e.target.value)} />
 
-                    <input placeholder="Cidade"
+                    <input placeholder={text.placeholders.city}
                         value={exp.city || ""}
                         onChange={e => updateItem(i, "city", e.target.value)} />
 
-                    <input placeholder="Período"
+                    <input placeholder={text.placeholders.period}
                         value={exp.period || ""}
                         onChange={e => updateItem(i, "period", e.target.value)} />
 
-                    <textarea placeholder="Descrição"
+                    <textarea placeholder={text.placeholders.description}
                         value={Array.isArray(exp.description) ? exp.description.join("\n") : exp.description}
                         onChange={e => updateItem(i, "description", e.target.value)} />
 
                     <select value={exp.style || "paragraph"} onChange={e => updateItem(i, "style", e.target.value)}>
-                        <option value="bullet">Bullet</option>
-                        <option value="paragraph">Parágrafo</option>
+                        <option value="bullet">{text.styleOptions.bullet}</option>
+                        <option value="paragraph">{text.styleOptions.paragraph}</option>
                     </select>
                 </div>
             ))}
 
             <button className="secondary-btn" onClick={addItem}>
-                + Adicionar experiência
+                {text.addLabel}
             </button>
         </div>
     );

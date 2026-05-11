@@ -1,6 +1,9 @@
+import { UI_TEXT } from "../content/uiText.pt-br";
 import { useArrayField } from "../hooks/useArrayField";
 
 export default function EducationForm({ education, setResume }) {
+    const text = UI_TEXT.forms.education;
+    const common = UI_TEXT.forms.common;
     const { addItem, updateItem, removeItem } = useArrayField({
         setResume,
         fieldKey: "education",
@@ -9,7 +12,7 @@ export default function EducationForm({ education, setResume }) {
 
     return (
         <div className="section-card">
-            <h2>Educação</h2>
+            <h2>{text.title}</h2>
 
             {education.map((edu, i) => (
                 <div key={i} className="entry-card">
@@ -20,33 +23,33 @@ export default function EducationForm({ education, setResume }) {
                             onClick={() => removeItem(i)}
                             disabled={education.length <= 1}
                         >
-                            Remover
+                            {common.remove}
                         </button>
                     </div>
 
-                    <input placeholder="Instituição"
+                    <input placeholder={text.placeholders.school}
                         value={edu.school}
                         onChange={e => updateItem(i, "school", e.target.value)} />
 
-                    <input placeholder="Curso"
+                    <input placeholder={text.placeholders.course}
                         value={edu.course}
                         onChange={e => updateItem(i, "course", e.target.value)} />
 
-                    <input placeholder="Cidade"
+                    <input placeholder={text.placeholders.city}
                         value={edu.city || ""}
                         onChange={e => updateItem(i, "city", e.target.value)} />
 
-                    <input placeholder="Período"
+                    <input placeholder={text.placeholders.period}
                         value={edu.period}
                         onChange={e => updateItem(i, "period", e.target.value)} />
 
-                    <textarea placeholder="Descrição"
+                    <textarea placeholder={text.placeholders.description}
                         value={edu.description}
                         onChange={e => updateItem(i, "description", e.target.value)} />
                 </div>
             ))}
 
-            <button className="secondary-btn" onClick={addItem}>+ Adicionar</button>
+            <button className="secondary-btn" onClick={addItem}>{text.addLabel}</button>
         </div>
     );
 }

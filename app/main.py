@@ -1,28 +1,40 @@
 from collections import deque
 from threading import Lock
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi import Depends, FastAPI, File, Header, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 import json
 import hashlib
+import os
 import time
 
 from app.ai import call_gemini
-from app.prompts import build_resume_prompt, build_translate_prompt
+from app.domain.resume_defaults import EMPTY_RESUME_PAYLOAD
+from app.prompts import build_pdf_import_prompt, build_resume_prompt, build_translate_prompt
 from app.schemas import ResumeRequest, ResumeResponse, TranslateResumeRequest
 from app.settings import get_cors_settings, get_security_settings
+from app.services.logger import get_logger, log_ai_parse_error
+from app.services.observability import init_observability
+from app.services.pdf_import import extract_text_from_pdf_bytes
 from app.services.resume_response import parse_json_from_ai_response, normalize_resume_response
 
 app = FastAPI()
+logger = get_logger(__name__)
 
 TRANSLATION_CACHE: dict[str, dict] = {}
 TRANSLATION_CACHE_TTL_SECONDS = 60 * 60 * 6
 TRANSLATION_CACHE_MAX_ENTRIES = 500
 RATE_LIMIT_BUCKETS: dict[str, deque[float]] = {}
 RATE_LIMIT_LOCK = Lock()
+MAX_PDF_BYTES = 5 * 1024 * 1024
+MAX_PDF_TEXT_CHARS = 20000
+PDF_HEADER = b"%PDF-"
+PDF_CONTENT_TYPES = {"application/pdf", "application/x-pdf", "application/octet-stream"}
+TRUST_PROXY_HEADERS = os.getenv("TRUST_PROXY_HEADERS", "").strip().lower() in {"1", "true", "yes", "on"}
 
 cors_settings = get_cors_settings()
 security_settings = get_security_settings()
+init_observability()
 
 app.add_middleware(
     CORSMiddleware,
@@ -51,6 +63,31 @@ def _enforce_rate_limit(client_key: str):
             raise HTTPException(status_code=429, detail="Muitas requisicoes. Tente novamente em instantes.")
 
         bucket.append(now)
+
+
+def _get_client_ip(request: Request) -> str:
+    if TRUST_PROXY_HEADERS:
+        forwarded = request.headers.get("x-forwarded-for", "")
+        if forwarded:
+            return forwarded.split(",")[0].strip()
+
+    return request.client.host if request.client else "unknown"
+
+
+async def _read_upload_bytes(file: UploadFile, max_bytes: int) -> bytes:
+    chunk_size = 1024 * 1024
+    contents = bytearray()
+
+    while True:
+        chunk = await file.read(chunk_size)
+        if not chunk:
+            break
+
+        contents.extend(chunk)
+        if len(contents) > max_bytes:
+            raise HTTPException(status_code=413, detail="PDF muito grande. Limite de 5MB.")
+
+    return bytes(contents)
 
 
 def _get_cached_translation(cache_key: str):
@@ -83,8 +120,9 @@ def _set_cached_translation(cache_key: str, payload: dict):
 
 
 def _require_api_auth_and_rate_limit(request: Request, x_api_key: str | None = Header(default=None)):
-    client_ip = request.client.host if request.client else "unknown"
-    _enforce_rate_limit(client_ip)
+    client_ip = _get_client_ip(request)
+    client_key = x_api_key or client_ip
+    _enforce_rate_limit(client_key)
 
     if security_settings.api_access_key and x_api_key != security_settings.api_access_key:
         raise HTTPException(status_code=401, detail="Nao autorizado.")
@@ -102,7 +140,7 @@ async def improve_resume(data: ResumeRequest, _security=Depends(_require_api_aut
     try:
         ai_response = await call_gemini(prompt)
     except RuntimeError as e:
-        print(f"Erro interno improve_resume: {e}")
+        logger.exception("Erro interno improve_resume")
         raise HTTPException(status_code=502, detail="Falha ao acionar servico de IA.") from e
 
     if not ai_response.strip():
@@ -117,8 +155,7 @@ async def improve_resume(data: ResumeRequest, _security=Depends(_require_api_aut
         return ResumeResponse.model_validate(normalized)
 
     except json.JSONDecodeError:
-        print("Resposta invalida da IA:")
-        print(ai_response)
+        log_ai_parse_error(logger, "improve_resume", ai_response)
 
         raise HTTPException(
             status_code=502,
@@ -164,7 +201,55 @@ async def translate_resume(data: TranslateResumeRequest, _security=Depends(_requ
     try:
         ai_response = await call_gemini(prompt)
     except RuntimeError as e:
-        print(f"Erro interno translate_resume: {e}")
+        logger.exception("Erro interno translate_resume")
+        raise HTTPException(status_code=502, detail="Falha ao acionar servico de IA.") from e
+
+    if not ai_response.strip():
+        raise HTTPException(
+            status_code=502,
+            detail="Falha ao processar resposta da IA."
+        )
+
+
+@app.post("/import/resume/pdf", response_model=ResumeResponse)
+async def import_resume_pdf(
+    file: UploadFile = File(...),
+    _security=Depends(_require_api_auth_and_rate_limit)
+):
+    filename = (file.filename or "").lower()
+    if filename and not filename.endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Arquivo invalido. Envie um PDF.")
+
+    content_type = (file.content_type or "").lower()
+    if content_type and content_type not in PDF_CONTENT_TYPES:
+        raise HTTPException(status_code=400, detail="Arquivo invalido. Envie um PDF.")
+
+    try:
+        contents = await _read_upload_bytes(file, MAX_PDF_BYTES)
+    finally:
+        await file.close()
+
+    if not contents:
+        raise HTTPException(status_code=400, detail="Arquivo vazio.")
+
+    if not contents.startswith(PDF_HEADER):
+        raise HTTPException(status_code=400, detail="Arquivo invalido. Envie um PDF.")
+
+    try:
+        extracted_text = extract_text_from_pdf_bytes(contents, max_chars=MAX_PDF_TEXT_CHARS)
+    except Exception as e:
+        logger.exception("Erro ao extrair texto do PDF")
+        raise HTTPException(status_code=400, detail="Nao foi possivel ler o PDF.") from e
+
+    if not extracted_text:
+        raise HTTPException(status_code=400, detail="Nao foi possivel extrair texto do PDF.")
+
+    prompt = build_pdf_import_prompt(extracted_text)
+
+    try:
+        ai_response = await call_gemini(prompt)
+    except RuntimeError as e:
+        logger.exception("Erro interno import_resume_pdf")
         raise HTTPException(status_code=502, detail="Falha ao acionar servico de IA.") from e
 
     if not ai_response.strip():
@@ -175,15 +260,10 @@ async def translate_resume(data: TranslateResumeRequest, _security=Depends(_requ
 
     try:
         parsed = parse_json_from_ai_response(ai_response)
-        normalized = normalize_resume_response(parsed, payload)
-        response = ResumeResponse.model_validate(normalized)
-        response_payload = response.model_dump() if hasattr(response, "model_dump") else response.dict()
-        _set_cached_translation(cache_key, response_payload)
-        return response
-
+        normalized = normalize_resume_response(parsed, EMPTY_RESUME_PAYLOAD)
+        return ResumeResponse.model_validate(normalized)
     except json.JSONDecodeError:
-        print("Resposta invalida da IA:")
-        print(ai_response)
+        log_ai_parse_error(logger, "import_resume_pdf", ai_response)
 
         raise HTTPException(
             status_code=502,

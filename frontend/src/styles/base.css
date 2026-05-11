@@ -1,13 +1,24 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
+    font-family: var(--font-sans);
     color: var(--color-text-primary);
-    line-height: 1.45;
+    line-height: 1.55;
     background:
-        radial-gradient(circle at 10% 10%, rgba(245, 158, 11, 0.14), transparent 36%),
-        radial-gradient(circle at 88% 30%, rgba(15, 118, 110, 0.14), transparent 40%),
-        linear-gradient(120deg, #f3efe4 0%, #fbfaf6 38%, #f7f8f5 100%);
+        radial-gradient(120% 120% at 8% 6%, rgba(240, 170, 116, 0.22), transparent 55%),
+        radial-gradient(120% 120% at 92% 14%, rgba(15, 107, 105, 0.2), transparent 55%),
+        linear-gradient(130deg, #f7f2ea 0%, #f7f5f2 44%, #eff2f2 100%);
+    background-attachment: fixed;
+}
+
+button,
+input,
+textarea,
+select {
+    font-family: inherit;
 }

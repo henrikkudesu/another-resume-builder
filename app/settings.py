@@ -63,8 +63,14 @@ def _get_int_env(name: str, default: int) -> int:
 
 
 def get_security_settings() -> SecuritySettings:
+    app_env = os.getenv("APP_ENV", "development").strip().lower()
+    api_access_key = os.getenv("API_ACCESS_KEY", "").strip() or None
+
+    if app_env == "production" and not api_access_key:
+        raise RuntimeError("API_ACCESS_KEY deve ser configurada em producao")
+
     return SecuritySettings(
-        api_access_key=os.getenv("API_ACCESS_KEY", "").strip() or None,
+        api_access_key=api_access_key,
         rate_limit_requests=_get_int_env("AI_RATE_LIMIT_REQUESTS", 30),
         rate_limit_window_seconds=_get_int_env("AI_RATE_LIMIT_WINDOW_SECONDS", 60),
     )

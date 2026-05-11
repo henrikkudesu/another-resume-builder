@@ -1,14 +1,16 @@
+import { UI_TEXT } from "../content/uiText.pt-br";
+
 export default function AppFooter() {
     return (
         <footer className="app-footer">
             <p>
-                Desenvolvido por{" "}
+                {UI_TEXT.footer.label}{" "}
                 <a
-                    href="https://github.com/henrikkudesu"
+                    href={UI_TEXT.footer.linkHref}
                     target="_blank"
                     rel="noreferrer noopener"
                 >
-                    github.com/henrikkudesu
+                    {UI_TEXT.footer.linkText}
                 </a>
             </p>
         </footer>

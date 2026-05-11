@@ -80,8 +80,8 @@ export function createPdfLayoutEngine(doc) {
     function drawBlock(title, subtitle, content = {}) {
         const mode = content.mode || "bullet";
         const safeLines = (content.bullets || []).filter(Boolean);
-        const paragraph = content.paragraph || "";
-        const paragraphFallback = content.paragraphFallback || "-";
+        const paragraph = content.paragraph ?? "";
+        const paragraphFallback = content.paragraphFallback ?? "-";
 
         const titleHeight = measureParagraph(title, 11, 2);
         const subtitleHeight = subtitle ? measureParagraph(subtitle, 10, 4) : 0;

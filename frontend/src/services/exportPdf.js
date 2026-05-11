@@ -62,9 +62,24 @@ export async function exportResumeAsPdf(resume, language = "pt-br") {
     });
 
     drawSectionTitle(labels.extras);
-    drawParagraph(`${labels.skills}: ${resume.extras.skills || "-"}`, { family: "times", fontSize: 10.5, extraBottom: 3 });
-    drawParagraph(`${labels.certifications}: ${resume.extras.certifications || "-"}`, { family: "times", fontSize: 10.5, extraBottom: 3 });
-    drawParagraph(`${labels.interests}: ${resume.extras.interests || "-"}`, { family: "times", fontSize: 10.5, extraBottom: 6 });
+
+    const extras = [
+        { label: labels.skills, value: resume.extras.skills },
+        { label: labels.certifications, value: resume.extras.certifications },
+        { label: labels.interests, value: resume.extras.interests },
+    ];
+
+    extras.forEach((item) => {
+        if (!item.value) {
+            return;
+        }
+
+        drawParagraph(`${item.label}: ${item.value}`, {
+            family: "times",
+            fontSize: 10.5,
+            extraBottom: 3,
+        });
+    });
 
     const filename = `${(resume.personal.name || labels.filenameFallback).replace(/\s+/g, "-").toLowerCase()}.pdf`;
     doc.save(filename);

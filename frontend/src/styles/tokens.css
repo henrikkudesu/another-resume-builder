@@ -1,16 +1,22 @@
 :root {
-    --color-text-primary: #1f2430;
-    --color-text-secondary: #4b5565;
-    --color-surface-card: rgba(255, 255, 255, 0.88);
-    --color-border-subtle: #d9d8d2;
-    --color-accent: #0f766e;
-    --color-accent-strong: #115e59;
-    --color-focus: #0d9488;
-    --color-focus-soft: rgba(13, 148, 136, 0.24);
+    --font-sans: "Space Grotesk", "Sora", sans-serif;
+    --font-display: "Fraunces", "Playfair Display", serif;
 
-    --elevation-surface: 0 14px 34px rgba(20, 35, 52, 0.12);
-    --elevation-soft: 0 8px 20px rgba(20, 35, 52, 0.08);
+    --color-text-primary: #14161c;
+    --color-text-secondary: #555e6f;
+    --color-surface-card: rgba(255, 255, 255, 0.94);
+    --color-surface-soft: rgba(247, 244, 239, 0.9);
+    --color-border-subtle: rgba(168, 160, 150, 0.45);
+    --color-accent: #0f6b69;
+    --color-accent-strong: #0a3f45;
+    --color-accent-soft: rgba(15, 107, 105, 0.16);
+    --color-focus: #1ca6a3;
+    --color-focus-soft: rgba(28, 166, 163, 0.28);
 
-    --radius-surface: 18px;
-    --radius-control: 12px;
+    --elevation-surface: 0 20px 45px rgba(16, 24, 40, 0.14);
+    --elevation-soft: 0 10px 22px rgba(16, 24, 40, 0.1);
+    --elevation-card: 0 12px 28px rgba(14, 35, 38, 0.14);
+
+    --radius-surface: 22px;
+    --radius-control: 14px;
 }

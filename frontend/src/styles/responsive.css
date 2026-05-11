@@ -2,7 +2,7 @@
     .app-hero {
         grid-template-columns: 1fr;
         gap: 0.8rem;
-        padding: 1.25rem 1.2rem;
+        padding: 1.3rem 1.2rem;
     }
 
     .hero-meta {
@@ -63,7 +63,7 @@
     }
 
     .preview-toolbar {
-        padding: 0.85rem;
+        padding: 0.9rem;
     }
 
     .resume-preview {
@@ -89,5 +89,43 @@
 
     .translation-updated-at {
         font-size: 0.78rem;
+    }
+
+    .tutorial-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .resume-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .resume-contact {
+        width: 100%;
+    }
+
+    .resume-item {
+        padding: 0.6rem 0.7rem 0.6rem 0.95rem;
+    }
+
+    .modal-body {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .modal-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .modal-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .modal-actions .secondary-btn,
+    .modal-actions .primary-btn {
+        flex: 1 1 100%;
     }
 }

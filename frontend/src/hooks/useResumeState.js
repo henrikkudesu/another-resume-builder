@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { EMPTY_RESUME, JOHN_DOE_RESUME, STORAGE_KEY } from "../domain/resumeDefaults";
+import { EMPTY_RESUME, STORAGE_KEY } from "../domain/resumeDefaults";
 import { getInitialResume } from "../domain/resumeNormalization";
+import { JOHN_DOE_RESUME } from "../content/samples/johnDoe.pt-br";
 
 export function useResumeState() {
     const [resume, setResumeState] = useState(() => getInitialResume(STORAGE_KEY, JOHN_DOE_RESUME, EMPTY_RESUME));

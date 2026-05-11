@@ -1,4 +1,7 @@
+import { UI_TEXT } from "../content/uiText.pt-br";
+
 export default function PersonalForm({ data, setResume }) {
+    const text = UI_TEXT.forms.personal;
 
     function update(field, value) {
         setResume(prev => ({
@@ -12,25 +15,25 @@ export default function PersonalForm({ data, setResume }) {
 
     return (
         <div className="section-card">
-            <h2>Dados Pessoais</h2>
+            <h2>{text.title}</h2>
 
-            <input placeholder="Nome"
+            <input placeholder={text.placeholders.name}
                 value={data.name}
                 onChange={e => update("name", e.target.value)} />
 
-            <input placeholder="Cidade"
+            <input placeholder={text.placeholders.city}
                 value={data.city}
                 onChange={e => update("city", e.target.value)} />
 
-            <input placeholder="País"
+            <input placeholder={text.placeholders.country}
                 value={data.country}
                 onChange={e => update("country", e.target.value)} />
 
-            <input placeholder="Telefone"
+            <input placeholder={text.placeholders.phone}
                 value={data.phone}
                 onChange={e => update("phone", e.target.value)} />
 
-            <input placeholder="Links (LinkedIn, GitHub...)"
+            <input placeholder={text.placeholders.links}
                 value={data.links}
                 onChange={e => update("links", e.target.value)} />
         </div>

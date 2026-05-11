@@ -1,4 +1,5 @@
 import { getApiBaseCandidates } from "./api/apiBaseCandidates";
+import { postFileWithFallback } from "./api/postFileWithFallback";
 import { postWithFallback } from "./api/postWithFallback";
 
 const API_BASE_CANDIDATES = getApiBaseCandidates();
@@ -17,4 +18,8 @@ export function translateResume(data, targetLanguage, sourceLanguage = "pt-br") 
         target_language: targetLanguage,
         source_language: sourceLanguage,
     });
+}
+
+export function importResumeFromPdf(file) {
+    return postFileWithFallback(API_BASE_CANDIDATES, "/import/resume/pdf", file);
 }

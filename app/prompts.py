@@ -168,3 +168,73 @@ Formato de saida obrigatorio:
   }}
 }}
 """
+
+
+def build_pdf_import_prompt(raw_text: str) -> str:
+    return f"""
+Voce e um parser especializado em curriculos.
+
+Objetivo:
+- Extrair informacoes do curriculo a partir do texto abaixo
+- Organizar tudo no schema padrao do app
+- Manter 100% de fidelidade ao conteudo encontrado
+
+Texto extraido do PDF:
+{raw_text}
+
+Regras criticas:
+- Nao invente experiencias, tecnologias, ferramentas, numeros ou resultados
+- Se nao encontrar um campo, mantenha vazio
+- Nao adicione chaves extras
+- Se houver bullets claros em uma experiencia, use style = "bullet"
+- Caso contrario, use style = "paragraph"
+
+Regras de formatacao:
+- summary: paragrafo unico se existir
+- Em cada item de experiences, respeite o campo style:
+  - style = "bullet": description deve ser lista de bullets curtos (array de strings)
+  - style = "paragraph": description deve ser texto em paragrafo unico (string)
+- education[].description pode ser texto curto
+
+Formato de saida obrigatorio:
+- Retorne APENAS JSON valido
+- Sem markdown
+- Sem bloco de codigo
+- Sem texto antes/depois do JSON
+- Deve seguir exatamente esta estrutura:
+
+{{
+  "personal": {{
+    "name": "",
+    "city": "",
+    "country": "",
+    "phone": "",
+    "links": ""
+  }},
+  "summary": "",
+  "experiences": [
+    {{
+      "role": "",
+      "company": "",
+      "city": "",
+      "period": "",
+      "description": "ou [\"\"] conforme style",
+      "style": "bullet ou paragraph"
+    }}
+  ],
+  "education": [
+    {{
+      "school": "",
+      "course": "",
+      "city": "",
+      "period": "",
+      "description": ""
+    }}
+  ],
+  "extras": {{
+    "skills": "",
+    "certifications": "",
+    "interests": ""
+  }}
+}}
+"""
