@@ -1,3 +1,15 @@
+const API_ACCESS_KEY = import.meta.env.VITE_API_ACCESS_KEY;
+
+function buildHeaders() {
+    const headers = { "Content-Type": "application/json" };
+
+    if (API_ACCESS_KEY) {
+        headers["x-api-key"] = API_ACCESS_KEY;
+    }
+
+    return headers;
+}
+
 export async function postWithFallback(baseCandidates, path, payload) {
     let lastError = null;
 
@@ -8,7 +20,7 @@ export async function postWithFallback(baseCandidates, path, payload) {
         try {
             res = await fetch(`${baseUrl}${path}`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: buildHeaders(),
                 body: JSON.stringify(payload),
             });
         } catch (err) {

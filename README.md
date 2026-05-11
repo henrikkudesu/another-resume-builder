@@ -27,6 +27,7 @@ Aplicacao full stack para montar curriculos com apoio de IA.
 ### Frontend (`frontend/.env`)
 
 - `VITE_API_BASE_URL`: URL base da API
+- `VITE_API_ACCESS_KEY`: mesma chave de `API_ACCESS_KEY` (quando usada)
 
 ## Execucao local
 
@@ -64,7 +65,7 @@ Use dois projetos apontando para o mesmo repositorio.
 - Root Directory: `frontend`
 - Build Command: `npm run build`
 - Output Directory: `dist`
-- Variavel: `VITE_API_BASE_URL=https://SEU_BACKEND.vercel.app/api`
+- Variaveis: `VITE_API_BASE_URL=https://SEU_BACKEND.vercel.app/api`, `VITE_API_ACCESS_KEY`
 
 ## Metas
 

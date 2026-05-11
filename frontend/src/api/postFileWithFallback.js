@@ -1,3 +1,9 @@
+const API_ACCESS_KEY = import.meta.env.VITE_API_ACCESS_KEY;
+
+function buildHeaders() {
+    return API_ACCESS_KEY ? { "x-api-key": API_ACCESS_KEY } : {};
+}
+
 export async function postFileWithFallback(baseCandidates, path, file, extraFields = {}) {
     let lastError = null;
 
@@ -17,6 +23,7 @@ export async function postFileWithFallback(baseCandidates, path, file, extraFiel
 
             res = await fetch(`${baseUrl}${path}`, {
                 method: "POST",
+                headers: buildHeaders(),
                 body: formData,
             });
         } catch (err) {
