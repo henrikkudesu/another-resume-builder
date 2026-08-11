@@ -1,12 +1,10 @@
 import { useRef, useState } from "react";
 
 import { importResumeFromPdfWithValidation } from "../services/importResumeFlow";
-import { mergeResume } from "../domain/resumeUtils";
 import { UI_TEXT } from "../content/uiText.pt-br";
 
 export function useImportFlow({ resume, setResume, showToast, setLoadingAction, onHideTutorial }) {
     const [importDraft, setImportDraft] = useState(null);
-    const [importMode, setImportMode] = useState("merge");
     const fileInputRef = useRef(null);
 
     function handleImportPdfClick() {
@@ -40,7 +38,6 @@ export function useImportFlow({ resume, setResume, showToast, setLoadingAction, 
         try {
             const data = await importResumeFromPdfWithValidation(file);
             setImportDraft(data);
-            setImportMode("merge");
             showToast(UI_TEXT.toasts.importExtracted, "info");
         } catch (err) {
             console.error(err);
@@ -59,11 +56,7 @@ export function useImportFlow({ resume, setResume, showToast, setLoadingAction, 
             return;
         }
 
-        const nextResume = importMode === "replace"
-            ? importDraft
-            : mergeResume(resume, importDraft);
-
-        setResume(nextResume);
+        setResume(importDraft);
         setImportDraft(null);
         onHideTutorial?.();
         showToast(UI_TEXT.toasts.importApplied, "success");
@@ -72,8 +65,6 @@ export function useImportFlow({ resume, setResume, showToast, setLoadingAction, 
     return {
         fileInputRef,
         importDraft,
-        importMode,
-        setImportMode,
         handleImportPdfClick,
         handleImportPdfSelected,
         handleImportCancel,

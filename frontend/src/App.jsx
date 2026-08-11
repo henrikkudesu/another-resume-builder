@@ -57,8 +57,6 @@ function App() {
   const {
     fileInputRef,
     importDraft,
-    importMode,
-    setImportMode,
     handleImportPdfClick,
     handleImportPdfSelected,
     handleImportCancel,
@@ -264,10 +262,14 @@ function App() {
                 <h3>{UI_TEXT.modal.title}</h3>
                 <p className="modal-subtitle">{UI_TEXT.modal.subtitle}</p>
               </div>
-              <button className="secondary-btn" onClick={handleImportCancel}>{UI_TEXT.modal.actions.close}</button>
+              <button className="secondary-btn" onClick={handleImportCancel}>{UI_TEXT.modal.actions.cancel}</button>
             </header>
 
             <div className="modal-body">
+              <div className="modal-callout">
+                <strong>Atencao:</strong> {UI_TEXT.modal.warning}
+              </div>
+
               <div className="modal-section">
                 <h4>{UI_TEXT.modal.sections.personal}</h4>
                 <p><strong>{UI_TEXT.modal.fields.name}:</strong> {truncateText(importDraft.personal?.name, 60)}</p>
@@ -329,32 +331,9 @@ function App() {
             </div>
 
             <div className="modal-footer">
-              <div className="modal-choice">
-                <label className="radio-option">
-                  <input
-                    type="radio"
-                    name="import-mode"
-                    value="merge"
-                    checked={importMode === "merge"}
-                    onChange={() => setImportMode("merge")}
-                  />
-                  {UI_TEXT.modal.actions.merge}
-                </label>
-                <label className="radio-option">
-                  <input
-                    type="radio"
-                    name="import-mode"
-                    value="replace"
-                    checked={importMode === "replace"}
-                    onChange={() => setImportMode("replace")}
-                  />
-                  {UI_TEXT.modal.actions.replace}
-                </label>
-              </div>
-
               <div className="modal-actions">
                 <button className="secondary-btn" onClick={handleImportCancel}>{UI_TEXT.modal.actions.cancel}</button>
-                <button className="primary-btn" onClick={handleImportApply}>{UI_TEXT.modal.actions.apply}</button>
+                <button className="primary-btn danger-btn" onClick={handleImportApply}>{UI_TEXT.modal.actions.apply}</button>
               </div>
             </div>
           </div>

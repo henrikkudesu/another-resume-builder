@@ -210,6 +210,20 @@ async def translate_resume(data: TranslateResumeRequest, _security=Depends(_requ
             detail="Falha ao processar resposta da IA."
         )
 
+    try:
+        parsed = parse_json_from_ai_response(ai_response)
+        normalized = normalize_resume_response(parsed, payload)
+        _set_cached_translation(cache_key, normalized)
+        return ResumeResponse.model_validate(normalized)
+
+    except json.JSONDecodeError:
+        log_ai_parse_error(logger, "translate_resume", ai_response)
+
+        raise HTTPException(
+            status_code=502,
+            detail="Falha ao processar resposta da IA."
+        )
+
 
 @app.post("/import/resume/pdf", response_model=ResumeResponse)
 async def import_resume_pdf(

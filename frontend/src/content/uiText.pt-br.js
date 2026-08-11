@@ -160,7 +160,8 @@ export const UI_TEXT = {
     },
     modal: {
         title: "Revisao da importacao",
-        subtitle: "Confira os dados extraidos do PDF antes de aplicar.",
+        subtitle: "Confira os dados extraidos do PDF antes de substituir seu curriculo atual.",
+        warning: "Esta acao substitui os dados do formulario pelo conteudo extraido do PDF.",
         sections: {
             personal: "Dados pessoais",
             summary: "Resumo",
@@ -179,11 +180,8 @@ export const UI_TEXT = {
             interests: "Interesses",
         },
         actions: {
-            close: "Fechar",
             cancel: "Cancelar",
-            apply: "Aplicar ao curriculo",
-            merge: "Mesclar apenas campos vazios",
-            replace: "Substituir tudo pelo PDF",
+            apply: "Substituir meu curriculo pelo PDF",
         },
     },
     misc: {

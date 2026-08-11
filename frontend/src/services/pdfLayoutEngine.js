@@ -112,9 +112,41 @@ export function createPdfLayoutEngine(doc) {
         y += 6;
     }
 
+    function drawKeyValueBlock(label, value, options = {}) {
+        if (!value) return;
+
+        const {
+            labelSize = 10,
+            valueSize = 10.2,
+            labelColor = [20, 20, 20],
+            valueColor = [30, 30, 30],
+            extraBottom = 5,
+        } = options;
+
+        const totalHeight = measureParagraph(label, labelSize, 1) + measureParagraph(value, valueSize, extraBottom, 10);
+        ensureSpace(totalHeight);
+
+        drawParagraph(label, {
+            font: "bold",
+            family: "times",
+            fontSize: labelSize,
+            color: labelColor,
+            extraBottom: 1,
+        });
+
+        drawParagraph(value, {
+            family: "times",
+            fontSize: valueSize,
+            color: valueColor,
+            indent: 10,
+            extraBottom,
+        });
+    }
+
     return {
         drawParagraph,
         drawSectionTitle,
         drawBlock,
+        drawKeyValueBlock,
     };
 }

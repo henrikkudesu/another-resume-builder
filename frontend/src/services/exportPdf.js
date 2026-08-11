@@ -6,7 +6,7 @@ export async function exportResumeAsPdf(resume, language = "pt-br") {
     const labels = getExportLabels(language);
     const { jsPDF } = await import("jspdf");
     const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const { drawParagraph, drawSectionTitle, drawBlock } = createPdfLayoutEngine(doc);
+    const { drawParagraph, drawSectionTitle, drawBlock, drawKeyValueBlock } = createPdfLayoutEngine(doc);
 
     drawParagraph(resume.personal.name || labels.fallbackTitle, {
         font: "bold",
@@ -74,10 +74,10 @@ export async function exportResumeAsPdf(resume, language = "pt-br") {
             return;
         }
 
-        drawParagraph(`${item.label}: ${item.value}`, {
-            family: "times",
-            fontSize: 10.5,
-            extraBottom: 3,
+        drawKeyValueBlock(item.label, item.value, {
+            labelSize: 10,
+            valueSize: 10.2,
+            extraBottom: 4,
         });
     });
 
